@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Author, Book, Library, Librarian
+from .models import UserProfile
 
 
 @admin.register(Author)
@@ -26,3 +27,10 @@ class LibraryAdmin(admin.ModelAdmin):
 class LibrarianAdmin(admin.ModelAdmin):
     list_display = ('name', 'library')
     search_fields = ('name', 'library__name')
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'role')
+    search_fields = ('user__username', 'role')
+    list_filter = ('role',)
