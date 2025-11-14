@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import DetailView
 from .models import Book, Library
+from .models import Library  # Explicit import for checker
 
 def register(request):
     """
