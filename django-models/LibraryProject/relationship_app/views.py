@@ -1,16 +1,25 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.detail import DetailView
-from .models import Book, Library
-from .models import Library  # Explicit import for checker
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.contrib.auth.views import LoginView, LogoutView
+from .models import Book
+from .models import Library
 
 def register(request):
     """
-    Placeholder view for user registration. 
-    It currently redirects to the login page (assuming 'login' is a valid name).
-    You would replace this with actual registration logic later.
+    Handle user registration.
     """
-    # Placeholder action: Redirect user to the login page
-    return redirect('login') 
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Log the user in after registration
+            return redirect('list_books')  # Redirect to books list after registration
+    else:
+        form = UserCreationForm()
+    
+    return render(request, 'relationship_app/register.html', {'form': form})
 
 # --- Function-based View ---
 def list_books(request):
@@ -21,7 +30,6 @@ def list_books(request):
     context = {
         'books': all_books
     }
-    # Renders the information using the list_books.html template
     return render(request, 'relationship_app/list_books.html', context)
 
 # --- Class-based View (DetailView) ---
@@ -31,7 +39,4 @@ class LibraryDetailView(DetailView):
     """
     model = Library
     template_name = 'relationship_app/library_detail.html'
-    # Specify the name of the object in the context dictionary (e.g., {'library': ...})
     context_object_name = 'library'
-
-    
