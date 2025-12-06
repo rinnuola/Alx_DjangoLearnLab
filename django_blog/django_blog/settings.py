@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-goxrl2yn48f&!7j7rx0+$(!4)g(^8=b+zh&fr@t!e0sz#@6hho'
+SECRET_KEY = 'django-insecure-+9%$b*s*&#)q2tqx5%p7uf4uf%%z=vg6u_2vd6_ln8(7iu==0&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -75,12 +75,12 @@ WSGI_APPLICATION = 'django_blog.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django_blog',
+        'USER': 'django_blog_user',
+        'PASSWORD': 'DjangoBlog1234?',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
@@ -121,7 +121,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+    BASE_DIR / "blog/templates/static",
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# REDIRECT URLS
+LOGIN_REDIRECT_URL = "/profile"
+
+
+["USER", "PORT"]
