@@ -1,39 +1,46 @@
-from rest_framework.views import APIView
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import AllowAny
+from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-from rest_framework.authtoken.models import Token
-from .serializers import UserSerializer, LoginSerializer
 
-User = get_user_model()
+CustomUser = get_user_model()
 
 
-class RegisterView(APIView):
-    permission_classes = [AllowAny]
+class FollowUserView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = CustomUser.objects.all()
 
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
+    def post(self, request, user_id):
+        user_to_follow = get_object_or_404(
+            CustomUser.objects.all(),
+            id=user_id
+        )
 
-            token, _ = Token.objects.get_or_create(user=user)
-
+        if user_to_follow == request.user:
             return Response(
-                {
-                    "user": UserSerializer(user).data,
-                    "token": token.key
-                },
-                status=status.HTTP_201_CREATED
+                {"detail": "You cannot follow yourself."},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        request.user.following.add(user_to_follow)
+        return Response(
+            {"detail": "User followed successfully."},
+            status=status.HTTP_200_OK
+        )
 
 
-class LoginView(APIView):
-    permission_classes = [AllowAny]
+class UnfollowUserView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = CustomUser.objects.all()
 
-    def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+    def post(self, request, user_id):
+        user_to_unfollow = get_object_or_404(
+            CustomUser.objects.all(),
+            id=user_id
+        )
+
+        request.user.following.remove(user_to_unfollow)
+        return Response(
+            {"detail": "User unfollowed successfully."},
+            status=status.HTTP_200_OK
+        )
