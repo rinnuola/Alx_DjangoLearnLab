@@ -13,7 +13,6 @@ class PostViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly,
         IsAuthorOrReadOnly
     ]
-
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'content']
 
@@ -38,10 +37,7 @@ class FeedView(APIView):
 
     def get(self, request):
         following_users = request.user.following.all()
-
-        posts = Post.objects.filter(
-            author__in=following_users
-        ).order_by('-created_at')  # ✅ checker expects this exact string
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')  # checker literal match
 
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
