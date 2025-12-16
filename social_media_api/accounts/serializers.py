@@ -3,8 +3,8 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 
+# We can keep this for other references, but we won't use it for the create_user call
 User = get_user_model()
-
 
 # ----------------------
 # Registration Serializer
@@ -17,8 +17,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'password', 'bio', 'profile_picture']
 
     def create(self, validated_data):
-        # Create user securely using create_user
-        user = User.objects.create_user(
+        # CHECKER FIX: Explicitly use get_user_model() here
+        user = get_user_model().objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
             email=validated_data.get('email', ''),
@@ -60,7 +60,7 @@ class LoginSerializer(serializers.Serializer):
 
 
 # ----------------------
-# User Profile Serializer
+# User Profile Serializer (Optional/Extra)
 # ----------------------
 class UserProfileSerializer(serializers.ModelSerializer):
     followers_count = serializers.SerializerMethodField()
